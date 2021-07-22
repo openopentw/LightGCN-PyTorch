@@ -222,7 +222,8 @@ class RegVec(nn.Module):
         nn.init.normal_(self.reg_i, std=0.01)
 
     def forward(self, i):
-        norm_reg_i = self.reg_i / self.reg_i.square().sum().sqrt()
-        reg = (i * norm_reg_i).sum(1).square().mean().sqrt()
+        # norm_reg_i = self.reg_i / self.reg_i.square().sum().sqrt()
+        norm_reg_i = self.reg_i / (self.reg_i ** 2).sum().sqrt()
         # reg = (i * self.reg_i).sum(1).square().mean().sqrt()
+        reg = ((i * norm_reg_i).sum(1) ** 2).mean().sqrt()
         return reg

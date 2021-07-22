@@ -17,8 +17,8 @@ from register import dataset
 
 Recmodel = register.MODELS[world.model_name](world.config, dataset)
 Recmodel = Recmodel.to(world.device)
-if world.config['regularizor']:
-    model_reg = RegVec(world.config['latent_dim_rec'])
+if world.config['regu_weight'] != 0:
+    model_reg = RegVec(world.config['latent_dim_rec']).to(world.device)
     bpr = utils.BPRLoss(Recmodel, world.config, model_reg)
 else:
     bpr = utils.BPRLoss(Recmodel, world.config)
@@ -48,7 +48,7 @@ try:
         if epoch %10 == 0:
             cprint("[TEST]")
             Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])
-        output_information = Procedure.BPR_train_original(dataset, Recmodel, bpr, epoch, neg_k=Neg_k,w=w)
+        output_information = Procedure.BPR_train_original(dataset, Recmodel, bpr, epoch, neg_k=Neg_k,w=w,regu_weight=world.config['regu_weight'])
         print(f'EPOCH[{epoch+1}/{world.TRAIN_epochs}] {output_information}')
         torch.save(Recmodel.state_dict(), weight_file)
 finally:

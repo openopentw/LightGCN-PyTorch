@@ -40,12 +40,14 @@ class BPRLoss:
         self.lr = config['lr']
         self.opt = optim.Adam(recmodel.parameters(), lr=self.lr)
 
-    def stageOne(self, users, pos, neg, user_reg=None):
+    def stageOne(self, users, pos, neg, user_reg=None, regu_weight=0):
         loss, reg_loss = self.model.bpr_loss(users, pos, neg)
         reg_loss = reg_loss*self.weight_decay
         if user_reg is not None:
-            reg = self.model_reg(user_reg)
-        loss = loss + reg_loss + reg
+            all_users, _ = self.model.computer()
+            users_emb = all_users[users]
+            reg = self.model_reg(users_emb)
+        loss = loss + reg_loss + regu_weight * reg
 
         self.opt.zero_grad()
         loss.backward()

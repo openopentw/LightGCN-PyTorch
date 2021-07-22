@@ -34,7 +34,7 @@ config = {}
 all_dataset = ['lastfm', 'gowalla', 'yelp2018', 'amazon-book']
 all_models  = ['mf', 'lgn']
 # config['batch_size'] = 4096
-config['bpr_batch_size'] = args.bpr_batch
+config['bpr_batch_size'] = args.bpr_batch #TODO: make batch_size smaller
 config['latent_dim_rec'] = args.recdim
 config['lightGCN_n_layers']= args.layer
 config['dropout'] = args.dropout
@@ -47,7 +47,7 @@ config['decay'] = args.decay
 config['pretrain'] = args.pretrain
 config['A_split'] = False
 config['bigdata'] = False
-config['regularizor'] = args.regularizor
+config['regu_weight'] = args.regu_weight
 
 GPU = torch.cuda.is_available()
 device = torch.device('cuda' if GPU else "cpu")

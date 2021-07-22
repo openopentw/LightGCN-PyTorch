@@ -10,7 +10,7 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Go lightGCN")
-    parser.add_argument('--bpr_batch', type=int,default=2048,
+    parser.add_argument('--bpr_batch', type=int,default=2048, # 2048
                         help="the batch size for bpr loss training procedure")
     parser.add_argument('--recdim', type=int,default=64,
                         help="the embedding size of lightGCN")
@@ -43,5 +43,5 @@ def parse_args():
     parser.add_argument('--pretrain', type=int, default=0, help='whether we use pretrained weight or not')
     parser.add_argument('--seed', type=int, default=2020, help='random seed')
     parser.add_argument('--model', type=str, default='lgn', help='rec-model, support [mf, lgn]')
-    parser.add_argument('--regularizor', action='store_true', default=False)
+    parser.add_argument('--regu_weight', type=float, default=0)
     return parser.parse_args()

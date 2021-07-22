@@ -23,7 +23,7 @@ from sklearn.metrics import roc_auc_score
 CORES = multiprocessing.cpu_count() // 2
 
 
-def BPR_train_original(dataset, recommend_model, loss_class, epoch, neg_k=1, w=None):
+def BPR_train_original(dataset, recommend_model, loss_class, epoch, neg_k=1, w=None, regu_weight=0):
     Recmodel = recommend_model
     Recmodel.train()
     bpr: utils.BPRLoss = loss_class
@@ -47,8 +47,11 @@ def BPR_train_original(dataset, recommend_model, loss_class, epoch, neg_k=1, w=N
                                                    posItems,
                                                    negItems,
                                                    batch_size=world.config['bpr_batch_size'])):
-        for batch_reg_users in utils.minibatch(users, batch_size=world.config['bpr_batch_size']):
-            cri = bpr.stageOne(batch_users, batch_pos, batch_neg, user_reg=batch_reg_users)
+        # TODO: regu_w = 0
+        for i in range(10):
+        # for batch_reg_users in utils.minibatch(users, batch_size=32):
+            batch_reg_users = utils.minibatch(users, batch_size=32)
+            cri = bpr.stageOne(batch_users, batch_pos, batch_neg, user_reg=batch_reg_users, regu_weight=regu_weight)
             aver_loss += cri
             if world.tensorboard:
                 w.add_scalar(f'BPRLoss/BPR', cri, epoch * int(len(users) / world.config['bpr_batch_size']) + batch_i)
