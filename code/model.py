@@ -213,3 +213,16 @@ class LightGCN(BasicModel):
         inner_pro = torch.mul(users_emb, items_emb)
         gamma     = torch.sum(inner_pro, dim=1)
         return gamma
+
+class RegVec(nn.Module):
+    def __init__(self, emb_dim):
+        super(RegVec, self).__init__()
+        self.reg_i = nn.Parameter(torch.zeros(emb_dim))
+
+        nn.init.normal_(self.reg_i, std=0.01)
+
+    def forward(self, i):
+        norm_reg_i = self.reg_i / self.reg_i.square().sum().sqrt()
+        reg = (i * norm_reg_i).sum(1).square().mean().sqrt()
+        # reg = (i * self.reg_i).sum(1).square().mean().sqrt()
+        return reg

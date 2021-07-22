@@ -32,16 +32,20 @@ except:
 class BPRLoss:
     def __init__(self,
                  recmodel : PairWiseModel,
-                 config : dict):
+                 config : dict,
+                 model_reg=None):
         self.model = recmodel
+        self.model_reg = model_reg
         self.weight_decay = config['decay']
         self.lr = config['lr']
         self.opt = optim.Adam(recmodel.parameters(), lr=self.lr)
 
-    def stageOne(self, users, pos, neg):
+    def stageOne(self, users, pos, neg, user_reg=None):
         loss, reg_loss = self.model.bpr_loss(users, pos, neg)
         reg_loss = reg_loss*self.weight_decay
-        loss = loss + reg_loss
+        if user_reg is not None:
+            reg = self.model_reg(user_reg)
+        loss = loss + reg_loss + reg
 
         self.opt.zero_grad()
         loss.backward()

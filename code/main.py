@@ -1,4 +1,5 @@
 import world
+from model import RegVec
 import utils
 from world import cprint
 import torch
@@ -16,7 +17,11 @@ from register import dataset
 
 Recmodel = register.MODELS[world.model_name](world.config, dataset)
 Recmodel = Recmodel.to(world.device)
-bpr = utils.BPRLoss(Recmodel, world.config)
+if world.config['regularizor']:
+    model_reg = RegVec(world.config['latent_dim_rec'])
+    bpr = utils.BPRLoss(Recmodel, world.config, model_reg)
+else:
+    bpr = utils.BPRLoss(Recmodel, world.config)
 
 weight_file = utils.getFileName()
 print(f"load and save to {weight_file}")
